@@ -8,7 +8,7 @@ let newTime = d.getHours()+':'+ d.getMinutes();
 
 let baseURL = 'http://api.openweathermap.org/data/2.5/weather?zip='
 
-let apiKey = '&APPID=bbee3673552ca695c2b8fa655569a66d';
+let apiKey = '&APPID=b55b7da31ee497fba7aa65fad2797708';
 
 
 //get API data
