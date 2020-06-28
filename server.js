@@ -1,5 +1,6 @@
 // Setup empty JS object to act as endpoint for all routes
-projectData = {};
+// projectData = {};
+
 const weatherData = [];
 
 // Require Express to run server and routes
@@ -50,7 +51,6 @@ function addEntry(req,res){
   newEntry = {
     name: req.body.name,
     temp: req.body.temp,
-    desc: req.body.desc,
     feelings: req.body.feelings,
     date: req.body.date,
     time: req.body.time

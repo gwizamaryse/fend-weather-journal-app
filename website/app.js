@@ -69,9 +69,11 @@ const updateUI = async () => {
 
             oldTitle.setAttribute('class', 'prev-title');
 
-            let farTemp = (allData[i].temp - 273.15) * 9/5 + 32;
-            let roundTemp = Math.round(farTemp);
-            oldTitle.innerHTML = allData[i].date + ' at ' + allData[i].time + ' -> It was ' + roundTemp + '&deg in ' + allData[i].name + ', with ' + allData[i].desc;
+            let celsiusTemp = (allData[i].temp - 273.15);
+            let roundTemp = Math.round(celsiusTemp);
+            oldTitle.innerHTML = allData[i].date + ' at ' + allData[i].time + 
+            ' -> It is ' +  ((roundTemp)) + '&deg' + 'Celsius  ' + 'in '
+             + allData[i].name ;
 
             document.getElementById('entry-logs').append(oldTitle);           
             document.getElementById('entry-logs').append(oldEntry);
@@ -104,7 +106,6 @@ const updateUI = async () => {
       .then(function(data){
 
           postData('/add', {  temp: data.main.temp, 
-                              desc: data.weather[0].description,
                               name: data.name,
                               feelings: feeling,
                               date: newDate,
