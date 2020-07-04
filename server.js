@@ -1,14 +1,11 @@
 // Setup empty JS object to act as endpoint for all routes
-// projectData = {};
-
-const weatherData = [];
+projectData = {};
 
 // Require Express to run server and routes
 const express = require('express');
-
 // Start up an instance of app
 const app = express();
-
+/*Dependencies*/
 const bodyParser = require('body-parser');
 /* Middleware*/
 //Here we are configuring express to use body-parser as middle-ware.
@@ -18,53 +15,38 @@ app.use(bodyParser.json());
 // Cors for cross origin allowance
 const cors = require('cors');
 app.use(cors());
-
-
 // Initialize the main project folder
 app.use(express.static('website'));
 
-
 // Setup Server
-const port = 3000;
-
-// Spin up the server
-const server = app.listen(port, listening)
-
-function listening(){
+const port = 8080;
+//Spin up server
+const server = app.listen(port, listening);
+// or const server = app.listen(port, ()=>{console.log(`running on localhost: ${port}`)})
+//Callback to debug
+function listening() {
     console.log('server running');
     console.log(`running on localhost: ${port}`);
-}
+};
 
-//GET route
+// POST route
+app.post('/', (req, res) => {
+  projectData.date = req.body.date;
+  projectData.temperature = req.body.main.temp;
+  projectData.feelings = req.body.feelings;
+  projectData.name = req.body.name;
+  console.log('', projectData.date, '\n', 
+  projectData.name, '\n', 
+  projectData.feelings,   '\n' ,
+  projectData.temperature, '\n',
+ );
+  res.send();
+});
 
-app.get('/getProjectData', function (req, res) {
-
+// GET route
+app.get('/getRecords', (req, res) => {
     res.send(projectData);
-  })
-
-  //post route adds entry 
-
-app.post('/add', addEntry);
-
-function addEntry(req,res){
-
-  newEntry = {
-    name: req.body.name,
-    temp: req.body.temp,
-    feelings: req.body.feelings,
-    date: req.body.date,
-    time: req.body.time
-  }
-
-  weatherData.push(newEntry);
-  res.send(weatherData)
-}
+});
 
 
-//get request 
-app.get('/all', getData) 
-function getData (req, res){
-res.send(weatherData);
-console.log(weatherData);
-}
 

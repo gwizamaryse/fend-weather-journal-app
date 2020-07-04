@@ -58,8 +58,9 @@ h4{
     background: rgba(59, 74, 107, .4);
 }
 
-.prev-title{
+#title{
     padding-top: 6%;
+    text-decoration-style: solid;
 }
 
 .myInput{
@@ -113,6 +114,7 @@ button:active {
 
 h1{
     font-size: 36px;
+    display:block;
 }
 
 textarea{
