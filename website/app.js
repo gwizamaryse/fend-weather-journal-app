@@ -1,123 +1,64 @@
 /* Global Variables */
-
+// US is default country. Parameter is zip code,country code
+const url = "http://api.openweathermap.org/data/2.5/weather?units=imperial&zip=";
+const apiKey = "&APPID=b55b7da31ee497fba7aa65fad2797708";
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = (d.getMonth() + 1) +'/'+ d.getDate()+'/'+ d.getFullYear();
+let newDate = d.getMonth()+ 1 +'.'+ d.getDate()+'.'+ d.getFullYear();
 let newTime = d.getHours()+':'+ d.getMinutes();
-
-
-let baseURL = 'http://api.openweathermap.org/data/2.5/weather?zip='
-
-let apiKey = '&APPID=b55b7da31ee497fba7aa65fad2797708';
-
-
-//get API data
-const getEntry = async (baseURL, zip, key)=>{
-
-    const res = await fetch(baseURL+zip+key)
+const getRecords = async (url = '') => {
     try {
-  
-      const weatherInfo = await res.json();
-      console.log(weatherInfo)
-        
-      return weatherInfo;
-    }  catch(error) {
-      console.log("error", error);
-      // appropriately handle the error
+        const res = await fetch(url);
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.log(error);
     }
+};
 
+// POST Data
+const postData = async (url = '', data = {}) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+          // Body data type must match "Content-Type" header
+        body: JSON.stringify(data)
+        });
+        try {
+          const newData = await response.json();
+          return newData;
+        }catch(error) {
+        console.log("error", error)
+        }
+};
+
+const generateData = async () => {
+  const feelings = document.getElementById('feelings').value;
+  const zip = document.getElementById('zip').value;
+  const response = await fetch(`${url}${zip}${apiKey}`);
+  try {
+      const responseData = await response.json();
+      responseData.feelings = feelings;
+      responseData.date = newDate;
+      await postData('/', responseData);
+      updateUI();
+  } catch (error) {
+      console.error("error", error);
+  }
+};
+
+const updateUI = async () => {
+    const projectData = await getRecords('/getRecords');
+    document.getElementById('date').innerHTML = `Today's Date is: ${projectData.date}`;
+    document.getElementById('temp').innerHTML = `The Temperature is ${projectData.temperature} &#8457` + ` in ${projectData.name}`;
+    document.getElementById('content').innerHTML = `Current feeling is: ${projectData.feelings}`;
+    document.getElementById('end').innerHTML = `To check weather in another city, simply enter the city's zip code, Thank you!!!!`;
 };
 
 
-//store the api data
-const postData = async ( url = '', data = {})=>{
 
-    const response = await fetch(url, {
-    method: 'POST', 
-    credentials: 'same-origin', 
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data), // body data type must match "Content-Type" header        
-  });
-  try {
-    const newData = await response.json();
-    return newData;
-  }catch(error) {
-  console.log("error", error)
-  }
-}
-
-
-
-//update page content with recent entries
-const updateUI = async () => {
-    const request = await fetch('/all');
-    try{
-      const allData = await request.json();
-      console.log(allData);
-
-      document.getElementById('entry-logs').innerHTML = "";
-
-      for (let i = allData.length - 1; i >= 0; i--) {
-       
-            let oldEntry = document.createElement('div');
-            let oldTitle = document.createElement('h3');
-            let oldContent = document.createElement('p');
-
-            oldEntry.setAttribute('class', 'prev-entry');
-
-            oldTitle.setAttribute('class', 'prev-title');
-
-            let celsiusTemp = (allData[i].temp - 273.15);
-            let roundTemp = Math.round(celsiusTemp);
-            oldTitle.innerHTML = allData[i].date + ' at ' + allData[i].time + 
-            ' -> It is ' +  ((roundTemp)) + '&deg' + 'Celsius  ' + 'in '
-             + allData[i].name ;
-
-            document.getElementById('entry-logs').append(oldTitle);           
-            document.getElementById('entry-logs').append(oldEntry);
-
-         
-            oldContent.setAttribute('class', 'prev-content');
-            oldContent.innerHTML = allData[i].feelings;
-
-            oldEntry.append(oldContent);
-
-        }
-
-        return allData;
-    }catch(error){
-      console.log("error", error);
-    }
-  }
-  
-
-  document.getElementById('generate').addEventListener('click', performAction);
-
-  function performAction(e){
-      const newZip =  document.getElementById('zip').value;
-      let zip = newZip + ',us';
-
-      const feeling = document.getElementById('feelings').value;
-
-      getEntry(baseURL, zip, apiKey)
-
-      .then(function(data){
-
-          postData('/add', {  temp: data.main.temp, 
-                              name: data.name,
-                              feelings: feeling,
-                              date: newDate,
-                              time: newTime
-
-                          }                                
-                  );
-        })
-        .then(function(data){
-            
-          updateUI()
-            }
-        )
-        
-  }
+document.getElementById('button').addEventListener('click', generateData);
